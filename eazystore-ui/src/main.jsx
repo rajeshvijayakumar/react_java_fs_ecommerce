@@ -16,6 +16,7 @@ import Home, { productsLoader } from "./components/Home.jsx";
 import ErrorPage from "./components/ErrorPage.jsx";
 import { contactAction } from "./components/Contact.jsx";
 import { ToastContainer, Bounce } from "react-toastify";
+import ProductDetail from "./components/ProductDetail.jsx";
 
 
 // This method of routes mechanism used commonly and complex applications and have better readability
@@ -27,6 +28,7 @@ const routeDefinitions = createRoutesFromElements(
     <Route path="/contact" element={<Contact />} action={contactAction} />
     <Route path="/login" element={<Login />} />
     <Route path="/cart" element={<Cart />} />
+    <Route path="/products/:productId" element={<ProductDetail />} />
   </Route>,
 );
 
