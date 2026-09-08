@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PageTitle from "./PageTitle";
-import { Form } from "react-router-dom";
+import { Form, redirect, useActionData } from "react-router-dom";
 import apiClient from "../api/apiClient";
-import { useActionData, useNavigation, useSubmit } from "react-router-dom";
-import { useEffect, useRef } from "react";
+import { useNavigation, useSubmit } from "react-router-dom";
+import { useRef } from "react";
 import { toast } from "react-toastify";
-import { redirect } from "react-router-dom";
 
 export default function Contact() {
   const actionData = useActionData();
@@ -139,9 +138,8 @@ export default function Contact() {
   );
 }
 
-export async function contactAction({ request, params }) {
+  export async function contactAction({ request, params }) {
   const data = await request.formData();
-
   const contactData = {
     name: data.get("name"),
     email: data.get("email"),
@@ -150,8 +148,8 @@ export async function contactAction({ request, params }) {
   };
   try {
     await apiClient.post("/contacts", contactData);
-    return { success: true };
-    // return redirect("/home");
+    // return { success: true };
+    return redirect("/home");
   } catch (error) {
     throw new Response(
       error.message || "Failed to submit your message. Please try again.",
