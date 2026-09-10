@@ -8,10 +8,15 @@ import {
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 
+import { useContext } from "react";
+import { useCart } from "../store/cart-context";
+
 export default function Header() {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") === "dark" ? "dark" : "light";
   });
+
+  const { totalQuantity } = useCart();
 
   // const toggleTheme = () => {
   //   setTheme(() => {
@@ -41,7 +46,7 @@ export default function Header() {
     "text-center text-lg font-primary font-semibold text-primary dark:text-light py-2 hover:text-dark dark:hover:text-lighter";
 
   return (
-    <header className="border-b border-gray-300 dark:border-gray-600 sticky top-0 z-20 bg-normalbg dark:bg-darkbg">
+    <header className="max-w-[1200px] mx-auto px-6 py-8 border-b border-gray-300 dark:border-gray-600 sticky top-0 z-20 bg-normalbg dark:bg-darkbg">
       <div className="flex items-center justify-between max-w[1152px] mx-auto px-6 py-4">
         <Link to="/" className={navLinkClass}>
           <FontAwesomeIcon icon={faTags} className="h-8 w-8" />
@@ -100,11 +105,14 @@ export default function Header() {
               </NavLink>
             </li>
             <li>
-              <Link to="/cart" className="text-primary py-2">
+              <Link to="/cart" className="relative text-primary py-2">
                 <FontAwesomeIcon
                   icon={faShoppingBasket}
-                  className="dark:text-light"
+                  className="text-primary dark:text-light w-6 "
                 />
+                <div className="absolute -top-2 -right-6 text-xs bg-yellow-400 text-black font-semibold rounded-full px-2 py-1 leading-none">
+                  {totalQuantity}
+                </div>
               </Link>
             </li>
           </ul>

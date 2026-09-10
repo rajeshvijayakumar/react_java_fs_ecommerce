@@ -17,7 +17,7 @@ import ErrorPage from "./components/ErrorPage.jsx";
 import { contactAction } from "./components/Contact.jsx";
 import { ToastContainer, Bounce } from "react-toastify";
 import ProductDetail from "./components/ProductDetail.jsx";
-
+import {CartProvider} from "./store/cart-context.jsx";
 
 // This method of routes mechanism used commonly and complex applications and have better readability
 const routeDefinitions = createRoutesFromElements(
@@ -33,9 +33,6 @@ const routeDefinitions = createRoutesFromElements(
 );
 
 const appRouter = createBrowserRouter(routeDefinitions);
-
-
-
 
 // This method routes used in the simple and small applications
 // const appRouter = createBrowserRouter([
@@ -76,7 +73,16 @@ const appRouter = createBrowserRouter(routeDefinitions);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={appRouter} />
+    {/* // If you are using the react version below 19. Use '.Provider' behind the cart context...
+    <CartContext.Provider>
+      <RouterProvider router={appRouter} />
+    </CartContext.Provider> */}
+
+    {/* // STEP 4 */}
+    <CartProvider>
+      <RouterProvider router={appRouter} />
+    </CartProvider>
+
     <ToastContainer
       position="top-center"
       autoClose={3000}
