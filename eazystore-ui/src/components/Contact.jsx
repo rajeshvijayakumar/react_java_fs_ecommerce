@@ -138,7 +138,7 @@ export default function Contact() {
   );
 }
 
-  export async function contactAction({ request, params }) {
+export async function contactAction({ request, params }) {
   const data = await request.formData();
   const contactData = {
     name: data.get("name"),
@@ -152,7 +152,9 @@ export default function Contact() {
     return redirect("/home");
   } catch (error) {
     throw new Response(
-      error.message || "Failed to submit your message. Please try again.",
+      error.response?.data?.errorMessage ||
+        error.message ||
+        "Failed to submit your message. Please try again.",
       { status: error.status || 500 },
     );
   }

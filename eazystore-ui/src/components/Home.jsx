@@ -5,7 +5,6 @@ import { useLoaderData } from "react-router-dom";
 
 //Hooks
 export default function Home() {
-
   const products = useLoaderData();
 
   return (
@@ -20,14 +19,15 @@ export default function Home() {
 }
 
 export async function productsLoader() {
-
-   try {
-      const response = await apiClient.get("/products");
-      return response.data;
-    } catch (error) {
-      throw new Response(
-        error.message || "Failed to fetch products. Please try again.",
-        { status: error.status || 500 },
-      );
-    }
+  try {
+    const response = await apiClient.get("/products");
+    return response.data;
+  } catch (error) {
+    throw new Response(
+      error.response?.data?.errorMessage ||
+        error.message ||
+        "Failed to fetch products. Please try again.",
+      { status: error.status || 500 },
+    );
+  }
 }
