@@ -1,9 +1,12 @@
 package com.eazybytes.eazystore;
 
+import com.eazybytes.eazystore.config.AuditAwareImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
+@EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
 public class EazystoreApplication {
 
 	public static void main(String[] args) {

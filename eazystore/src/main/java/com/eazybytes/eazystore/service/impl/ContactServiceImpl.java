@@ -26,8 +26,6 @@ public class ContactServiceImpl implements IContactService {
         try {
 
             Contact contact = transformToEntity(contactRequestDto);
-            contact.setCreatedAt(Instant.now());
-            contact.setCreatedBy(contactRequestDto.getName());
             contactRepository.save(contact);
             return true;
         } catch (Exception exception) {
