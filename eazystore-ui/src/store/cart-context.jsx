@@ -1,6 +1,5 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 
-import { useEffect, useReducer } from "react";
 // // STEP 2
 // export const initialCartContext = {
 //   cart: [],
