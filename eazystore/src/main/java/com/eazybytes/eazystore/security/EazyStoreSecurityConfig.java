@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.util.List;
+
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -17,16 +19,15 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class EazyStoreSecurityConfig {
 
+    private final List<String> publicPaths;
+
     @Bean
     @Order(SecurityFilterProperties.BASIC_AUTH_ORDER)
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) {
 
-       return http.authorizeHttpRequests((requests) ->
-                requests.requestMatchers(HttpMethod.GET).permitAll()  // We can tell any http request type can be permitted without auth
-                        .requestMatchers("/api/v1/products/**", "/api/v1/contacts/**").permitAll()  // We can tell any number of http request path can be permitted without auth
-                        .requestMatchers("/api/v1/dummy/**").authenticated()  // We can tell /api/v1/dummy/** http request path can be permitted with auth
-                        .anyRequest().authenticated())
-                .formLogin(withDefaults())
+        return http.authorizeHttpRequests((requests) -> {
+            publicPaths.forEach(path -> requests.requestMatchers(path).permitAll());
+                }).formLogin(withDefaults())
                 .httpBasic(withDefaults())
                 .build();
     }
