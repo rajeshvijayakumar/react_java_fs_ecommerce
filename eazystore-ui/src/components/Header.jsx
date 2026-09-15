@@ -36,16 +36,19 @@ export default function Header() {
     } else {
       document.documentElement.classList.remove("dark");
     }
+
     setAdminMenuOpen(false);
-    
     setUserMenuOpen(false);
+
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setUserMenuOpen(false);
         setAdminMenuOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
+
   }, [theme, location.pathname]);
 
   const toggleTheme = () => {
