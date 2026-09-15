@@ -28,7 +28,7 @@ export default function Header() {
   const toggleUserMenu = () => setUserMenuOpen((prev) => !prev);
 
   const { totalQuantity } = useCart();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user,  logout } = useAuth();
 
   useEffect(() => {
     if (theme === "dark") {
@@ -128,7 +128,12 @@ export default function Header() {
                     onClick={toggleUserMenu}
                     className="relative text-primary"
                   >
-                    <span className={navLinkClass}>Hello John Doe</span>
+                    <span className={navLinkClass}>
+                      {` Hello ${
+                          user.name.length > 6 ? `${user.name.slice(0,6)}...`
+                          : user.name
+                      }`}
+                    </span>
                     <FontAwesomeIcon
                       icon={faAngleDown}
                       className="text-primary dark:text-light w-6 h-6"
