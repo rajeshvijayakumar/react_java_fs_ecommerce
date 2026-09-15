@@ -2,11 +2,8 @@ package com.eazybytes.eazystore.security;
 
 import com.eazybytes.eazystore.filter.JWTTokenValidatorFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -14,7 +11,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,7 +22,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,49 +37,25 @@ public class EazyStoreSecurityConfig {
     private final List<String> publicPaths;
 
     @Bean
-    @Order(SecurityFilterProperties.BASIC_AUTH_ORDER)
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) {
-
-        return http.csrf(AbstractHttpConfigurer::disable)
-                .cors(corsConfig -> corsConfigurationSource())
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
+            throws Exception {
+        return http.csrf(csrfConfig -> csrfConfig.disable())
+                .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests((requests) -> {
-            publicPaths.forEach(path -> requests.requestMatchers(path).permitAll());
-                })
+                            publicPaths.forEach(path ->
+                                    requests.requestMatchers(path).permitAll());
+                            requests.anyRequest().authenticated();
+                        }
+                )
                 .addFilterBefore(new JWTTokenValidatorFilter(publicPaths), BasicAuthenticationFilter.class)
                 .formLogin(withDefaults())
-                .httpBasic(withDefaults())
-                .build();
+                .httpBasic(withDefaults()).build();
     }
-
-    /*//user details required inside the spring boot In-Memory authentication
-    @Bean
-    public UserDetailsService userDetailsService() {
-        var user1 = User.builder().username("rajeshvijayakumar")
-                .password("$2a$12$vsi964EvG80PyZfavERimu1jX7rbTNjjj7SaGr8waXq3zwZX2kXqm").roles("USER").build();
-        var user2 = User.builder().username("admin")
-                .password("$2a$12$neiGI7viF8rIb8YBgniWruvNZSQNqtG4F3Mt3631ehov0BEk/N9vO").roles("USER","ADMIN").build();
-        return new InMemoryUserDetailsManager(user1, user2);
-    }*/
-
-    /*//Authenticating user data inside the spring boot In-Memory authentication
-    @Bean
-    public AuthenticationManager authenticationManager(
-            UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-
-        var daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-
-        var providerManager = new ProviderManager(daoAuthenticationProvider);
-
-        return providerManager;
-    }*/
 
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationProvider authenticationProvider) {
-
         var providerManager = new ProviderManager(authenticationProvider);
-
         return providerManager;
     }
 
@@ -93,10 +64,8 @@ public class EazyStoreSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
     @Bean
     public CompromisedPasswordChecker compromisedPasswordChecker() {
-
         return new HaveIBeenPwnedRestApiPasswordChecker();
     }
 
@@ -111,7 +80,7 @@ public class EazyStoreSecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-
         return source;
     }
+
 }
