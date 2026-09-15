@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -59,11 +61,23 @@ public class EazyStoreSecurityConfig {
     }
 
 
+    /*//Authenticating user data inside the spring boot In-Memory authentication
     @Bean
     public AuthenticationManager authenticationManager(
             UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
 
         var daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+
+        var providerManager = new ProviderManager(daoAuthenticationProvider);
+
+        return providerManager;
+    }*/
+
+    @Bean
+    public AuthenticationManager authenticationManager( PasswordEncoder passwordEncoder) {
+
+        var daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService());
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
 
         var providerManager = new ProviderManager(daoAuthenticationProvider);
@@ -76,6 +90,12 @@ public class EazyStoreSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+
+    @Bean
+    public CompromisedPasswordChecker compromisedPasswordChecker() {
+
+        return new HaveIBeenPwnedRestApiPasswordChecker();
+    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
