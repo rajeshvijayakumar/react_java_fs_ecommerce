@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
@@ -51,6 +52,7 @@ public class EazyStoreSecurityConfig {
                 .build();
     }
 
+    /*//user details required inside the spring boot In-Memory authentication
     @Bean
     public UserDetailsService userDetailsService() {
         var user1 = User.builder().username("rajeshvijayakumar")
@@ -58,8 +60,7 @@ public class EazyStoreSecurityConfig {
         var user2 = User.builder().username("admin")
                 .password("$2a$12$neiGI7viF8rIb8YBgniWruvNZSQNqtG4F3Mt3631ehov0BEk/N9vO").roles("USER","ADMIN").build();
         return new InMemoryUserDetailsManager(user1, user2);
-    }
-
+    }*/
 
     /*//Authenticating user data inside the spring boot In-Memory authentication
     @Bean
@@ -74,13 +75,11 @@ public class EazyStoreSecurityConfig {
         return providerManager;
     }*/
 
+
     @Bean
-    public AuthenticationManager authenticationManager( PasswordEncoder passwordEncoder) {
+    public AuthenticationManager authenticationManager(AuthenticationProvider authenticationProvider) {
 
-        var daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService());
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-
-        var providerManager = new ProviderManager(daoAuthenticationProvider);
+        var providerManager = new ProviderManager(authenticationProvider);
 
         return providerManager;
     }
