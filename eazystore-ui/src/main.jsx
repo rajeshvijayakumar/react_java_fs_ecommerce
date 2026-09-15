@@ -21,6 +21,7 @@ import { CartProvider } from "./store/cart-context.jsx";
 import { AuthProvider } from "./store/auth-context.jsx";
 import CheckoutForm from "./components/CheckoutForm.jsx";
 import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
+import Register, { registerAction } from "./components/Register.jsx";
 
 // This method of routes mechanism used commonly and complex applications and have better readability
 const routeDefinitions = createRoutesFromElements(
@@ -30,6 +31,7 @@ const routeDefinitions = createRoutesFromElements(
     <Route path="/about" element={<About />} />
     <Route path="/contact" element={<Contact />} action={contactAction} />
     <Route path="/login" element={<Login />} action={loginAction} />
+    <Route path="/register" element={<Register />} action={registerAction} />
     <Route path="/cart" element={<Cart />} />
     <Route element={<ProtectedRoutes />}>
       <Route path="/checkout" element={<CheckoutForm />} />
