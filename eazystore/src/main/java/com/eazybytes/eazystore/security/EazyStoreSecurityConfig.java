@@ -1,5 +1,6 @@
 package com.eazybytes.eazystore.security;
 
+import com.eazybytes.eazystore.filter.JWTTokenValidatorFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterProperties;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -47,7 +49,9 @@ public class EazyStoreSecurityConfig {
                 .cors(corsConfig -> corsConfigurationSource())
                 .authorizeHttpRequests((requests) -> {
             publicPaths.forEach(path -> requests.requestMatchers(path).permitAll());
-                }).formLogin(withDefaults())
+                })
+                .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
+                .formLogin(withDefaults())
                 .httpBasic(withDefaults())
                 .build();
     }
