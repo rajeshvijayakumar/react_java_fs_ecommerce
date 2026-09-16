@@ -24,7 +24,13 @@ export default function Login() {
       if (actionData?.success) {
         loginSuccess(actionData.jwtToken, actionData.user);
         sessionStorage.removeItem("redirectPath");
+
+        //updating jwt token in local storage takes time, and eventually navigation starts before it stores the token, we are getting 401 error in profile screen..
+        // to synchronize the storing logic and navigation.. set time out in 100 ms..
+        setTimeout(() => {
         navigate(from);
+        }, 100);
+        
       } else if (actionData?.errors) {
         toast.error(actionData.errors.message || "Login failed.");
       }
