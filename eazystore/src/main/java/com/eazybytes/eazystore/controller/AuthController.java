@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -57,6 +58,14 @@ public class AuthController {
             UserDto userDto = new UserDto();
             var loggedInUser = (Customer) authentication.getPrincipal();
             BeanUtils.copyProperties(loggedInUser, userDto);
+
+            // read the user roles from the authentication object and set it to the response dto
+            // for sending in the response.
+            userDto.setRoles(
+                    authentication.getAuthorities().stream()
+                            .map(grantedAuthority -> grantedAuthority.getAuthority())
+                            .collect(Collectors.joining(","))
+            );
 
             String jwtToken = jwtUtil.generateJwtToken(authentication);
 
