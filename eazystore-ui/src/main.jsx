@@ -20,7 +20,7 @@ import ProductDetail from "./components/ProductDetail.jsx";
 import { CartProvider } from "./store/cart-context.jsx";
 import { AuthProvider } from "./store/auth-context.jsx";
 import CheckoutForm from "./components/CheckoutForm.jsx";
-import Profile from "./components/Profile.jsx";
+import Profile, { profileAction, profileLoader } from "./components/Profile.jsx";
 import Orders from "./components/Orders.jsx";
 import AdminOrders from "./components/AdminOrders.jsx";
 import Messages from "./components/Messages.jsx";
@@ -39,7 +39,7 @@ const routeDefinitions = createRoutesFromElements(
     <Route path="/cart" element={<Cart />} />
     <Route element={<ProtectedRoutes />}>
       <Route path="/checkout" element={<CheckoutForm />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/profile" element={<Profile />} loader={profileLoader} action={profileAction} />
       <Route path="/orders" element={<Orders />} />
       <Route path="/admin/orders" element={<AdminOrders />} />
       <Route path="/admin/messages" element={<Messages />} />
