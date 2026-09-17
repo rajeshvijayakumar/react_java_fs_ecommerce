@@ -20,12 +20,22 @@ import ProductDetail from "./components/ProductDetail.jsx";
 import { CartProvider } from "./store/cart-context.jsx";
 import { AuthProvider } from "./store/auth-context.jsx";
 import CheckoutForm from "./components/CheckoutForm.jsx";
-import Profile, { profileAction, profileLoader } from "./components/Profile.jsx";
+import Profile, {
+  profileAction,
+  profileLoader,
+} from "./components/Profile.jsx";
 import Orders from "./components/Orders.jsx";
 import AdminOrders from "./components/AdminOrders.jsx";
 import Messages from "./components/Messages.jsx";
 import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
 import Register, { registerAction } from "./components/Register.jsx";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import {OrderSuccess} from "./components/OrderSuccess.jsx";
+
+const stripePromise = loadStripe(
+  "pk_test_51UGXl1ERMBo0WPl4VhbjKw11z4unVKViRzhdLdkT09YrE8Q3RtdBumsUVuqC1PvNgGyR8hXmv99cLrnoP2TZejZp00PPW19P4A",
+);
 
 // This method of routes mechanism used commonly and complex applications and have better readability
 const routeDefinitions = createRoutesFromElements(
@@ -39,12 +49,16 @@ const routeDefinitions = createRoutesFromElements(
     <Route path="/cart" element={<Cart />} />
     <Route element={<ProtectedRoutes />}>
       <Route path="/checkout" element={<CheckoutForm />} />
-      <Route path="/profile" element={<Profile />}
-       loader={profileLoader} 
-       action={profileAction}
-       shouldRevalidate={({actionResult}) => {
-            return !actionResult.success;
-       }} />
+      <Route path="/order-success" element={<OrderSuccess />} />
+      <Route
+        path="/profile"
+        element={<Profile />}
+        loader={profileLoader}
+        action={profileAction}
+        shouldRevalidate={({ actionResult }) => {
+          return !actionResult.success;
+        }}
+      />
       <Route path="/orders" element={<Orders />} />
       <Route path="/admin/orders" element={<AdminOrders />} />
       <Route path="/admin/messages" element={<Messages />} />
@@ -94,26 +108,28 @@ const appRouter = createBrowserRouter(routeDefinitions);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    {/* // If you are using the react version below 19. Use '.Provider' behind the cart context...
+    <Elements stripe={stripePromise}>
+      {/* // If you are using the react version below 19. Use '.Provider' behind the cart context...
     <CartContext.Provider>
       <RouterProvider router={appRouter} />
     </CartContext.Provider> */}
 
-    {/* // STEP 4 */}
-    <AuthProvider>
-      <CartProvider>
-        <RouterProvider router={appRouter} />
-      </CartProvider>
-    </AuthProvider>
-    <ToastContainer
-      position="top-center"
-      autoClose={3000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      draggable
-      pauseOnHover
-      theme={localStorage.getItem("theme") === "dark" ? "dark" : "light"}
-      transition={Bounce}
-    />
+      {/* // STEP 4 */}
+      <AuthProvider>
+        <CartProvider>
+          <RouterProvider router={appRouter} />
+        </CartProvider>
+      </AuthProvider>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        draggable
+        pauseOnHover
+        theme={localStorage.getItem("theme") === "dark" ? "dark" : "light"}
+        transition={Bounce}
+      />
+    </Elements>
   </StrictMode>,
 );
