@@ -18,7 +18,7 @@ export default function Profile() {
   const navigation = useNavigation();
   const navigate = useNavigate();
   const isSubmitting = navigation.state === "submitting";
-  const { logout } = useAuth();
+  const { loginSuccess, logout } = useAuth();
 
   const [profileData, setProfileData] = useState(initialProfileData);
 
@@ -34,6 +34,16 @@ export default function Profile() {
       } else {
         toast.success("Your Profile details are saved successfully!");
         setProfileData(actionData.profileData);
+
+        // Update the user object in auth context and localStorage
+        if (actionData.profileData) {
+          const updatedUser = {
+            ...profileData, // previous
+            ...actionData.profileData, // updated fields
+          };
+          // Update in context
+          loginSuccess(localStorage.getItem("jwtToken"), updatedUser);
+        }
       }
     }
   }, [actionData]);
@@ -139,11 +149,14 @@ export default function Profile() {
             name="street"
             type="text"
             placeholder="Street details"
-            value={profileData.street}
+            value={profileData.address?.street}
             onChange={(e) =>
               setProfileData((prev) => ({
                 ...prev,
+                address:{
+                  ...prev.address,
                 street: e.target.value,
+                },
               }))
             }
             className={textFieldStyle}
@@ -168,11 +181,14 @@ export default function Profile() {
               name="city"
               type="text"
               placeholder="Your City"
-              value={profileData.city}
+              value={profileData.address?.city}
               onChange={(e) =>
                 setProfileData((prev) => ({
                   ...prev,
+                  address:{
+                    ...prev.address,
                   city: e.target.value,
+                  }
                 }))
               }
               className={textFieldStyle}
@@ -199,11 +215,14 @@ export default function Profile() {
               minLength={2}
               maxLength={30}
               placeholder="Your State"
-              value={profileData.state}
+              value={profileData.address?.state}
               onChange={(e) =>
                 setProfileData((prev) => ({
                   ...prev,
+                  address:{
+                    ...prev.address,
                   state: e.target.value,
+                  }
                 }))
               }
               className={textFieldStyle}
@@ -226,11 +245,14 @@ export default function Profile() {
               name="postalCode"
               type="text"
               placeholder="Your Postal Code"
-              value={profileData.postalCode}
+              value={profileData.address?.postalCode}
               onChange={(e) =>
                 setProfileData((prev) => ({
                   ...prev,
+                  address:{
+                    ...prev.address,
                   postalCode: e.target.value,
+                  }
                 }))
               }
               className={textFieldStyle}
@@ -257,11 +279,14 @@ export default function Profile() {
               minLength={3}
               maxLength={30}
               placeholder="Your Country"
-              value={profileData.country}
+              value={profileData.address?.country}
               onChange={(e) =>
                 setProfileData((prev) => ({
                   ...prev,
+                  address:{
+                    ...prev.address,
                   country: e.target.value,
+                  }
                 }))
               }
               className={textFieldStyle}
