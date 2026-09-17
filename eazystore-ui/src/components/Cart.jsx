@@ -5,11 +5,18 @@ import emptyCartImage from "../assets/util/emptycart.png";
 import { useMemo } from "react";
 import { useCart } from "../store/cart-context";
 import CartTable from "./CartTable";
-
+import { useAuth } from "../store/auth-context";
 
 export default function Cart() {
-
   const { cart } = useCart();
+  const { isAuthenticated, user } = useAuth();
+
+  const isAddressIncomplete = useMemo(() => {
+    if (!isAuthenticated) return false;
+    if (!user.address) return true;
+    const { street, city, state, postalCode, country } = user.address;
+    return !street || !city || !state || !postalCode || !country;
+  }, [user]);
 
   // Memoize the cart length check to prevent re-renders
   const isCartEmpty = useMemo(() => cart.length === 0, [cart.length]);
@@ -31,8 +38,21 @@ export default function Cart() {
               </Link>
               {/* Proceed to Checkout Button */}
               <Link
-                to="/checkout"
-                className="py-2 px-4 bg-primary dark:bg-light text-white dark:text-black text-xl font-semibold rounded-sm flex justify-center items-center hover:bg-dark dark:hover:bg-lighter transition"
+                to={isAddressIncomplete ? "#" : "/checkout"}
+                className={`py-2 px-4 text-xl font-semibold rounded-sm flex justify-center items-center transition
+                  ${
+                    isAddressIncomplete
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-primary dark:bg-light hover:bg-dark dark:hover:bg-lighter"
+                  }
+                            text-white dark:text-black`}
+                // className="py-2 px-4 bg-primary dark:bg-light text-white dark:text-black text-xl font-semibold rounded-sm flex justify-center items-center hover:bg-dark dark:hover:bg-lighter transition"
+
+                onClick={(e) => {
+                  if (isAddressIncomplete) {
+                    e.preventDefault();
+                  }
+                }}
               >
                 Proceed to Checkout
               </Link>
