@@ -1,7 +1,9 @@
 package com.eazybytes.eazystore.service.impl;
 
 import com.eazybytes.eazystore.constants.ApplicationConstants;
+import com.eazybytes.eazystore.dto.OrderItemReponseDto;
 import com.eazybytes.eazystore.dto.OrderRequestDto;
+import com.eazybytes.eazystore.dto.OrderResponseDto;
 import com.eazybytes.eazystore.entity.Customer;
 import com.eazybytes.eazystore.entity.Order;
 import com.eazybytes.eazystore.entity.OrderItem;
@@ -50,4 +52,50 @@ public class OrderServiceImpl implements IOrderService {
         orderRepository.save(order);
 
     }
-}
+
+    @Override
+    public List<OrderResponseDto> getCustomerOrders() {
+
+        Customer customer = profileService.getAuthenticatedCustomer();
+        List<Order> orders = orderRepository.findByCustomerOrderByCreatedAtDesc(customer);
+
+        return orders.stream().map(this::mapToOrderResponseDTO).collect(Collectors.toList());
+    }
+
+
+    /**
+     * Map Order entity to OrderResponseDto
+     */
+    private OrderResponseDto mapToOrderResponseDTO(Order order) {
+
+        List<OrderItemReponseDto> itemDTOs = order.getOrderItems().stream()
+                .map(this::mapToOrderItemResponseDTO)
+                .collect(Collectors.toList());
+
+        OrderResponseDto orderResponseDto = new OrderResponseDto(
+                order.getOrderId(),
+                order.getOrderStatus(),
+                order.getTotalPrice(),
+                order.getCreatedAt().toString(),
+                itemDTOs
+        );
+
+        return orderResponseDto;
+    }
+
+    /**
+     * Map OrderItem entity to OrderItemResponseDto
+     */
+    private OrderItemReponseDto mapToOrderItemResponseDTO(OrderItem orderItem) {
+
+        OrderItemReponseDto itemDTO = new OrderItemReponseDto(
+                orderItem.getProduct().getName(),
+                orderItem.getQuantity(),
+                orderItem.getPrice(),
+                orderItem.getProduct().getImageUrl()
+        );
+
+        return  itemDTO;
+    }
+
+    }
