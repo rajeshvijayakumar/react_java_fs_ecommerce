@@ -34,7 +34,7 @@ public class JwtUtil {
                         .map(grantedAuthority -> grantedAuthority.getAuthority())
                         .collect(Collectors.joining(","))) //sending roles information inside the jwt token
                 .issuedAt(new java.util.Date())
-                .expiration(new java.util.Date((new java.util.Date()).getTime() + 60 * 60 * 1000))
+                .expiration(new java.util.Date((new java.util.Date()).getTime() + 24 * 60 * 60 * 1000))
                 .signWith(secretKey).compact();
         return jwt;
     }
