@@ -26,7 +26,7 @@ import Profile, {
 } from "./components/Profile.jsx";
 import Orders, { ordersLoader } from "./components/Orders.jsx";
 import AdminOrders, { adminOrdersLoader } from "./components/admin/AdminOrders.jsx";
-import Messages from "./components/admin/Messages.jsx";
+import Messages, { messagesLoader } from "./components/admin/Messages.jsx";
 import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
 import Register, { registerAction } from "./components/Register.jsx";
 import { loadStripe } from "@stripe/stripe-js";
@@ -59,9 +59,17 @@ const routeDefinitions = createRoutesFromElements(
           return !actionResult.success;
         }}
       />
-      <Route path="/orders" element={<Orders />} loader={ordersLoader}/>
-      <Route path="/admin/orders" element={<AdminOrders />} loader={adminOrdersLoader} />
-      <Route path="/admin/messages" element={<Messages />} />
+      <Route path="/orders" element={<Orders />} loader={ordersLoader} />
+      <Route
+        path="/admin/orders"
+        element={<AdminOrders />}
+        loader={adminOrdersLoader}
+      />
+      <Route
+        path="/admin/messages"
+        element={<Messages />}
+        loader={messagesLoader}
+      />
     </Route>
     <Route path="/products/:productId" element={<ProductDetail />} />
   </Route>,
