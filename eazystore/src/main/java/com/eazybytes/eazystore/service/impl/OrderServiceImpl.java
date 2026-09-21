@@ -14,6 +14,8 @@ import com.eazybytes.eazystore.repository.ProductRepository;
 import com.eazybytes.eazystore.service.IOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,7 +59,20 @@ public class OrderServiceImpl implements IOrderService {
     public List<OrderResponseDto> getCustomerOrders() {
 
         Customer customer = profileService.getAuthenticatedCustomer();
+
+        /*
+        //Fetching orders using derived queries..
         List<Order> orders = orderRepository.findByCustomerOrderByCreatedAtDesc(customer);
+        */
+
+        /*
+        // Fetching orders using JPQL (Java persistent query language)
+        List<Order> orders = orderRepository.findOrdersByCustomer(customer);
+        */
+
+        // Fetching orders using Native SQL query
+        List<Order> orders = orderRepository.findOrdersByCustomerWithNativeQuery(customer.getId());
+
 
         return orders.stream().map(this::mapToOrderResponseDTO).collect(Collectors.toList());
     }
@@ -65,20 +80,42 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public List<OrderResponseDto> getAllPendingOrders() {
+
+        /*
+        //Fetching orders by order status using derived queries..
         List<Order> orders = orderRepository.findByOrderStatus(ApplicationConstants.ORDER_STATUS_CREATED);
+        */
+
+        /*
+        // Fetching orders by order status using JPQL (Java persistent query language)
+        List<Order> orders = orderRepository.findOrdersByStatus(ApplicationConstants.ORDER_STATUS_CREATED);
+        */
+
+        // Fetching orders by order status using native SQL query
+        List<Order> orders = orderRepository.findOrdersByStatusWithNativeQuery(ApplicationConstants.ORDER_STATUS_CREATED);
+
 
         return orders.stream().map(this::mapToOrderResponseDTO).collect(Collectors.toList());
     }
 
     @Override
-    public Order updateOrderStatus(Long orderId, String orderStatus) {
-
+    public void updateOrderStatus(Long orderId, String orderStatus) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        orderRepository.updateOrderStatus(
+                orderId,
+                orderStatus,
+                email
+        );
+        /*
         Order order = orderRepository.findById(orderId).orElseThrow(
                 () -> new ResourceNotFoundException("Order", "OrderId", orderId.toString())
-        );
+            );
 
         order.setOrderStatus(orderStatus);
         return orderRepository.save(order);
+
+        */
     }
 
 
@@ -114,7 +151,7 @@ public class OrderServiceImpl implements IOrderService {
                 orderItem.getProduct().getImageUrl()
         );
 
-        return  itemDTO;
+        return itemDTO;
     }
 
-    }
+}
