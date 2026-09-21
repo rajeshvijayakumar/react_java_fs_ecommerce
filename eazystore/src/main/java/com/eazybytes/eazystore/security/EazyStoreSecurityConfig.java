@@ -50,7 +50,14 @@ public class EazyStoreSecurityConfig {
                             publicPaths.forEach(path ->
                                     requests.requestMatchers(path).permitAll());
 
+                            //path that can be accessed by admin only
                             requests.requestMatchers("/api/v1/admin/**").hasRole("ADMIN");
+
+                            //securing actuators & swagger access from normal and admin users..
+                            requests.requestMatchers("/eazystore/actuator/**").hasRole("OPS_ENG");
+                            requests.requestMatchers("/swagger-ui.html", "/swagger-ui/**",
+                            "/v3/api-docs/**").hasAnyRole("DEV_ENG","QA_ENG");
+
                             requests.anyRequest().hasAnyRole("USER", "ADMIN");
                         }
                 )
