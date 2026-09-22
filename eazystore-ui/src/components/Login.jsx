@@ -9,20 +9,24 @@ import {
 } from "react-router-dom";
 import apiClient from "../api/apiClient";
 import { toast } from "react-toastify";
-import {useAuth} from "../store/auth-context.jsx";
+// import {useAuth} from "../store/auth-context.jsx";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../store/auth-slice";
+
 
 export default function Login() {
 
+  const dispatch = useDispatch();
    const actionData = useActionData();
    const navigation = useNavigation();
    const isSubmitting = navigation.state === "submitting";
    const navigate = useNavigate();
-   const {loginSuccess} = useAuth();
+  //  const {loginSuccess} = useAuth();
    const from = sessionStorage.getItem("redirectPath") || "/home";
    
    useEffect(() => {
       if (actionData?.success) {
-        loginSuccess(actionData.jwtToken, actionData.user);
+       dispatch(loginSuccess({jwtToken: actionData.jwtToken, user: actionData.user}));
         sessionStorage.removeItem("redirectPath");
 
         //updating jwt token in local storage takes time, and eventually navigation starts before it stores the token, we are getting 401 error in profile screen..

@@ -9,10 +9,10 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 // import { useCart } from "../store/cart-context";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectTotalQuantity } from "../store/cart-slice";
-
-import { useAuth } from "../store/auth-context";
+import { selectIsAuthenticated, selectUser, logout } from "../store/auth-slice";
+// import { useAuth } from "../store/auth-context";
 import { toast } from "react-toastify";
 
 export default function Header() {
@@ -31,7 +31,11 @@ export default function Header() {
 
   const totalQuantity = useSelector(selectTotalQuantity);
   
-  const { isAuthenticated, user,  logout } = useAuth();
+  const dispatch = useDispatch();
+  // const { isAuthenticated, user,  logout } = useAuth();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
+
  const isAdmin = user?.roles?.includes("ROLE_ADMIN");
 
   useEffect(() => {
@@ -65,7 +69,7 @@ export default function Header() {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    logout();
+    dispatch(logout());
     toast.success("Logged out successfully!");
     navigate("/home");
   };
