@@ -8,7 +8,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useCart } from "../store/cart-context";
+// import { useCart } from "../store/cart-context";
+import { useSelector } from "react-redux";
+import { selectTotalQuantity } from "../store/cart-slice";
+
 import { useAuth } from "../store/auth-context";
 import { toast } from "react-toastify";
 
@@ -26,7 +29,8 @@ export default function Header() {
   const toggleAdminMenu = () => setAdminMenuOpen((prev) => !prev);
   const toggleUserMenu = () => setUserMenuOpen((prev) => !prev);
 
-  const { totalQuantity } = useCart();
+  const totalQuantity = useSelector(selectTotalQuantity);
+  
   const { isAuthenticated, user,  logout } = useAuth();
  const isAdmin = user?.roles?.includes("ROLE_ADMIN");
 

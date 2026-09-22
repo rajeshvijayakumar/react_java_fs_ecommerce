@@ -1,11 +1,15 @@
 import React from "react";
-import { useCart } from "../store/cart-context";
+// import { useCart } from "../store/cart-context";
+import { useSelector, useDispatch } from "react-redux";
+import {selectCartItems, addToCart, removeFromCart, clearCart} from "../store/cart-slice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
 export default function CartTable() {
-  const { cart, addToCart, removeFromCart } = useCart();
+
+  const dispatch = useDispatch();
+  const cart = useSelector(selectCartItems);
 
   const subtotal = cart
     .reduce((acc, item) => acc + item.price * item.quantity, 0)
@@ -13,7 +17,7 @@ export default function CartTable() {
 
   const updateCartQuantity = (productId, quantity) => {
     const product = cart.find((item) => item.productId === productId);
-    addToCart(product, quantity - (product?.quantity || 0));
+    dispatch( addToCart({product, quantity: quantity - ( product?.quantity || 0 )}));
   };
 
   return (
@@ -69,7 +73,7 @@ export default function CartTable() {
               <td className="px-4 sm:px-6 py-4">
                 <button
                   aria-label="delete-item"
-                  onClick={() => removeFromCart(item.productId)}
+                  onClick={() => dispatch(removeFromCart({productId: item.productId}))}
                   className="text-primary dark:text-red-400 border border-primary dark:border-red-400 p-2 rounded hover:bg-lighter dark:hover:bg-gray-700"
                 >
                   <FontAwesomeIcon icon={faTimes} />

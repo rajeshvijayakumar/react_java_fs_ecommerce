@@ -17,7 +17,7 @@ import ErrorPage from "./components/ErrorPage.jsx";
 import { contactAction } from "./components/Contact.jsx";
 import { ToastContainer, Bounce } from "react-toastify";
 import ProductDetail from "./components/ProductDetail.jsx";
-import { CartProvider } from "./store/cart-context.jsx";
+// import { CartProvider } from "./store/cart-context.jsx";
 import { AuthProvider } from "./store/auth-context.jsx";
 import CheckoutForm from "./components/CheckoutForm.jsx";
 import Profile, {
@@ -32,6 +32,10 @@ import Register, { registerAction } from "./components/Register.jsx";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import {OrderSuccess} from "./components/OrderSuccess.jsx";
+import store from "./store/store.js";
+import { Provider } from "react-redux";
+
+
 
 const stripePromise = loadStripe(
   "pk_test_51UGXl1ERMBo0WPl4VhbjKw11z4unVKViRzhdLdkT09YrE8Q3RtdBumsUVuqC1PvNgGyR8hXmv99cLrnoP2TZejZp00PPW19P4A",
@@ -124,9 +128,9 @@ createRoot(document.getElementById("root")).render(
 
       {/* // STEP 4 */}
       <AuthProvider>
-        <CartProvider>
+        <Provider store={store}>
           <RouterProvider router={appRouter} />
-        </CartProvider>
+        </Provider>
       </AuthProvider>
       <ToastContainer
         position="top-center"

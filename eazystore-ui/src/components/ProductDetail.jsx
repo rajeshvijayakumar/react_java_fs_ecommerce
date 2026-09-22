@@ -8,24 +8,28 @@ import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
-import { useCart } from "../store/cart-context";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../store/cart-slice";
+// import { useCart } from "../store/cart-context";
 
 export default function ProductDetail() {
   const location = useLocation();
   const product = location.state?.product;
   const navigate = useNavigate();
+  // Read the quantity directly. Redux automatically handles updates!
   const [quantity, setQuantity] = useState(1);
   const zoomRef = useRef(null);
   const [isHovering, setIsHovering] = useState(false);
   const [backgroundPosition, setBackgroundPosition] = useState("center");
 
-  const {addToCart} = useCart();
+  const dispatch = useDispatch();
 
-   const handleAddToCart = () => {
-     if (quantity < 1) return;
-     addToCart(product, quantity);
-   };
+  // const {addToCart} = useCart();
 
+  const handleAddToCart = () => {
+    if (quantity < 1) return;
+    dispatch(addToCart({ product, quantity }));
+  };
 
   const handleMouseMove = (e) => {
     const { left, top, width, height } =
