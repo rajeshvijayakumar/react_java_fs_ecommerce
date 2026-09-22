@@ -1,6 +1,7 @@
 package com.eazybytes.eazystore.controller;
 
 
+import com.eazybytes.eazystore.dto.ContactInfoDto;
 import com.eazybytes.eazystore.dto.ContactRequestDto;
 import com.eazybytes.eazystore.dto.ProductDto;
 import com.eazybytes.eazystore.service.IContactService;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ContactController {
 
     private final IContactService iContactService;
+    private final ContactInfoDto contactInfoDto;
 
 
     @PostMapping
@@ -27,5 +29,11 @@ public class ContactController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Request processed successfully.");
+    }
+
+    @GetMapping
+    public ResponseEntity<ContactInfoDto> getContactInfo(){
+
+        return ResponseEntity.ok(contactInfoDto);
     }
 }
