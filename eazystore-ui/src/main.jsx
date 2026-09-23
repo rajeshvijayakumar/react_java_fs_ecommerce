@@ -38,7 +38,7 @@ import { Provider } from "react-redux";
 
 
 const stripePromise = loadStripe(
-  "pk_test_51UGXl1ERMBo0WPl4VhbjKw11z4unVKViRzhdLdkT09YrE8Q3RtdBumsUVuqC1PvNgGyR8hXmv99cLrnoP2TZejZp00PPW19P4A",
+  "pk_test_51UGu21CviyG8xBjxBSiNpkdAxkPlg43vd92b5PraWGaKRuYdyPMep0KOG9kRYKexGPxWKvUXW2re9eGbCJvQdqoF00EG0gqxJL",
 );
 
 // This method of routes mechanism used commonly and complex applications and have better readability

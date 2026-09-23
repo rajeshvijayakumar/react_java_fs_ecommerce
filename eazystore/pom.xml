@@ -12,6 +12,7 @@
 	<artifactId>eazystore</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>eazystore</name>
+	<packaging>jar</packaging>
 	<description>EazyStore Spring Boot Application</description>
 	<properties>
 		<java.version>25</java.version>
